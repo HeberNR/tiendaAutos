@@ -1,9 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page isELIgnored="false" %> .
+<%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ include file ="header.jsp" %>
 
-<html>
-    <body>
+
         <h2>Formulario de Cliente</h2>
 
         <form action = "formCliente" method = "GET">
@@ -26,5 +26,6 @@
         <input type = "submit" value = "Enviar" />
         </form>
 
+<%@ include file ="footer.jsp" %>
     </body>
 </html>
