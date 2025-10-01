@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.progI.dao.ClienteDAO;
 import org.progI.entities.Cliente;
 
@@ -36,6 +37,11 @@ public class ClienteServlet extends HttpServlet {
     if (operacion == "nuevo") {
       Cliente clienteNuevo = new Cliente(nombre, apellido, telefono);
       clienteDAO.insert(clienteNuevo);
+      HttpSession session = req.getSession();
+      session.setAttribute("clienteTemporal", clienteNuevo);
+
+      res.sendRedirect("formulario_auto.jsp");
+      return;
     }
     if (operacion == "editar") {
       Cliente clienteEditar = clienteDAO.getById(id);
@@ -47,9 +53,7 @@ public class ClienteServlet extends HttpServlet {
     if (operacion == "eliminar") {
       clienteDAO.delete(id);
     }
-
     RequestDispatcher rd = req.getRequestDispatcher("/index.jsp");
-
     rd.forward(req, res);
   }
 }

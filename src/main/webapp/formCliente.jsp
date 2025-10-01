@@ -19,7 +19,7 @@
 
         <h2>Formulario de Cliente</h2>
 
-        <form action = "formCliente" method = "GET">
+        <form action = "ClienteServlet" method = "GET">
 
         <input type = "hidden" name = "txtId" value = "${not empty clienteEditar.idCliente ? clienteEditar.idCliente : -1}" />
         <input type = "hidden" name = "operacion" id = "operacion" value = "${param.operacion == 'editar' ? 'editar' : 'nuevo'}" />

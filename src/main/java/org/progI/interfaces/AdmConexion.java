@@ -15,7 +15,7 @@ public interface AdmConexion {
     String dbCadenaDeConexion = "jdbc:mysql://127.0.0.1:3306/progautos";
 
     // nom usuario
-    String dbUsuario = "admin";
+    String dbUsuario = "root";
 
     // pass bd
     String dbPass = "123456heber";
