@@ -22,7 +22,7 @@
 
     <servlet>
         <servlet-name>clienteServlet</servlet-name>
-        <servlet-class>org.progI.servlets.clienteServlet</servlet-class>
+        <servlet-class>org.progI.servlets.ClienteServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>clienteServlet</servlet-name>

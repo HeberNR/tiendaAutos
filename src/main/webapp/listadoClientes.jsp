@@ -29,14 +29,18 @@
         <th>Borrar</th>
     </tr>
     </thead>
+
     <tbody>
     <% for(Cliente cli : listaClientes) { %>
+        <tr>
            <td> <%=cli.getIdCliente() %> </td>
            <td> <%=cli.getNombre() %> </td>
            <td> <%=cli.getApellido() %> </td>
            <td> <%=cli.getTelefono() %> </td>
-           <td> </tr>
-           <td> </tr>
+           <td> <a href="formCliente.jsp?operacion=editar&id=<%=cli.getIdCliente()%>"> Editar </a></td>
+           <td> <a href="formCliente?operacion=eliminar&id=<%=cli.getIdCliente()%>"> Eliminar </a></td>
+        </tr>
     <% } %>
     </tbody>
 </table>
+<%@ include file ="footer.jsp" %>
