@@ -5,7 +5,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.progI.dao.ClienteDAO;
 import org.progI.entities.Cliente;
 
@@ -45,7 +44,7 @@ public class ClienteServlet extends HttpServlet {
       clienteEditar.setTelefono(telefono);
       clienteDAO.update(clienteEditar);
     }
-    if (operacion == "eliminar") {
+    if (operacion.equals("eliminar")) {
       clienteDAO.delete(id);
     }
     RequestDispatcher rd = req.getRequestDispatcher("/index.jsp");
