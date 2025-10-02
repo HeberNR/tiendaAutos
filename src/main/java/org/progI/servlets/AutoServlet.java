@@ -5,7 +5,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.progI.dao.AutoImpl;
 import org.progI.entities.Auto;
 import org.progI.entities.Cliente;
@@ -29,14 +28,8 @@ public class AutoServlet extends HttpServlet {
     Seguro seguro = null;
     int id = -1;
 
-    HttpSession session = req.getSession(false);
-    if (session != null) {
-      cliente = (Cliente) session.getAttribute("clienteTemporal");
-    }
-
     operacion = req.getParameter("operacion");
 
-    try {
       if ("editar".equals(operacion) || "nuevo".equals(operacion)) {
         patente = req.getParameter("txtPatente");
         color = req.getParameter("txtColor");
@@ -44,21 +37,14 @@ public class AutoServlet extends HttpServlet {
         kilometraje = Integer.parseInt(req.getParameter("txtKilometraje"));
         marca = Marca.valueOf(req.getParameter("txtMarca"));
         modelo = req.getParameter("txtModelo");
-
-        if (req.getParameter("txtId") != null && !req.getParameter("txtId").isEmpty()) {
-          id = Integer.parseInt(req.getParameter("txtId"));
-        }
       } else {
         id = Integer.parseInt(req.getParameter("id"));
       }
 
       AutoImpl autoImpl = new AutoImpl();
       if ("nuevo".equals(operacion)) {
-        Auto autoNuevo = new Auto(patente, color, anio, kilometraje, marca, modelo, cliente, seguro);
+        Auto autoNuevo = new Auto(patente, color, anio, kilometraje, marca, modelo);
         autoImpl.insert(autoNuevo);
-        if (session != null) {
-          session.removeAttribute("clienteTemporal");
-        }
       }
 
       if ("editar".equals(operacion)) {
@@ -80,12 +66,5 @@ public class AutoServlet extends HttpServlet {
 
       RequestDispatcher rd = req.getRequestDispatcher("/index.jsp");
       rd.forward(req, res);
-    } catch (IllegalArgumentException e) {
-      throw new RuntimeException(e);
-    } catch (ServletException e) {
-      throw new RuntimeException(e);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
     }
-  }
 }

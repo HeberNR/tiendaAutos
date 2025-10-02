@@ -30,7 +30,7 @@ public class ClienteServlet extends HttpServlet {
       id = Integer.parseInt(req.getParameter("txtId"));
     }
     else {
-      id = Integer.parseInt(req.getParameter("id"));
+      id = Integer.parseInt(req.getParameter("txtId"));
     }
 
     ClienteDAO clienteDAO = new ClienteDAO();

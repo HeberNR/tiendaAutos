@@ -3,44 +3,89 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ include file ="header.jsp" %>
 
-<jsp:useBean id="cliente" class="org.progI.entities.Cliente" scope="request" />
-<jsp:useBean id="clienteDAO" class="org.progI.dao.ClienteDAO" scope="page" />
+<jsp:useBean id="auto" class="org.progI.entities.Auto" scope="request" />
+<jsp:useBean id="autoImpl" class="org.progI.dao.AutoImpl" scope="page" />
 
 <c:if test = "${param.operacion == 'editar'}">
-    <c:set var = "idCliente" value = "${Integer.parseInt(param.id)}" />
-    <c:set var = "clienteEditar" value = "${clienteDAO.getById(idCliente)}" />
+    <c:set var = "idAuto" value = "${Integer.parseInt(param.id)}" />
+    <c:set var = "autoEditar" value = "${autoImpl.getById(idAuto)}" />
+    <c:set var="listaAutos" value="${autoImpl.getAll()}" />
 </c:if>
 
+<h2>
 <c:choose>
-    <c:when test = "${param.operacion == 'editar'}"> Editar Cliente </c:when>
-    <c:when test = "${param.operacion == 'eliminar'}"> Eliminar Cliente </c:when>
-    <c:otherwise> Nuevo Cliente </c:otherwise>
+    <c:when test = "${param.operacion == 'editar'}"> Editar Auto </c:when>
+    <c:when test = "${param.operacion == 'eliminar'}"> Eliminar Auto </c:when>
+    <c:otherwise> Nuevo Auto </c:otherwise>
 </c:choose>
+</h2>
 
-<h2>Formulario de Cliente</h2>
+<form action = "AutoServlet" method = "GET">
 
-<form action = "ClienteServlet" method = "GET">
+    <label for = "selectAuto"> Seleccionar Auto </label>
+    <select name = "listAuto" id = "listAuto" tabindex = "1">
+        <c:forEach var = "a" items = "${listaAutos}">
+            <option value = "${a.idAuto}">
+                <c:if test = "${autoEditar.idAuto == a.idAuto}">selected</c:if>
+                ${a.marca} ${a.modelo}
+            </option>
+        </c:forEach>
+    </select>
 
-    <input type = "hidden" name = "txtId" value = "${not empty clienteEditar.idCliente ? clienteEditar.idCliente : -1}" />
-    <input type = "hidden" name = "operacion" id = "operacion" value = "${param.operacion == 'editar' ? 'editar' : 'nuevo'}" />
-
-    <label for ="txtNombre"> Nombre </label>
-    <input type = "text" name = "txtNombre" id = "txtNombre" placeholder = "Nombre"
-    value = "${not empty clienteEditar.nombre ? clienteEditar.nombre : ''}" required />
     <br>
 
-    <label for ="txtApellido"> Apellido </label>
-    <input type = "text" name = "txtApellido" id = "txtApellido" placeholder = "Apellido"
-    value = "${not empty clienteEditar.apellido ? clienteEditar.apellido : ''}" required />
+    <input type = "hidden" name = "txtId"
+        value = "${not empty autoEditar.idAuto ? autoEditar.idAuto : -1}"
+    />
+
+    <input type = "hidden" name = "operacion" id = "operacion"
+        value = "${param.operacion == 'editar' ? 'editar' : 'nuevo'}"
+    />
+
+    <label for ="txtPatente"> Patente </label>
+    <input type = "text" name = "txtPatente" id = "txtPatente" placeholder = "Patente"
+        value = "${not empty autoEditar.patente ? autoEditar.patente : ''}"
+    required />
+
     <br>
 
-    <label for ="txtTelefono"> Telefono </label>
-    <input type = "text" name = "txtTelefono" id = "txtTelefono" placeholder = "Telefono"
-    value = "${not empty clienteEditar.telefono ? clienteEditar.telefono : ''}" required />
+    <label for = "txtColor"> Color </label>
+    <input type = "text" name = "txtColor" id = "txtColor" placeholder = "Color"
+        value = "${not empty autoEditar.color ? autoEditar.color : ''}"
+    required />
+
     <br>
+
+    <label for ="txtAnio"> Año </label>
+    <input type = "text" name = "txtAnio" id = "txtAnio" placeholder = "Año"
+        value = "${not empty autoEditar.anio ? autoEditar.anio : ''}"
+    required />
+
+    <br>
+
+    <label for ="txtKilometraje"> Kilometraje </label>
+    <input type = "text" name = "txtKilometraje" id = "txtKilometraje" placeholder = "Kilometraje"
+        value = "${not empty autoEditar.kilometraje ? autoEditar.kilometraje : ''}"
+    required />
+
+    <br>
+
+    <label for = "txtMarca"> Marca </label>
+    <input type = "text" name = "txtMarca" id = "txtMarca" placeholder = "Marca"
+        value = "${not empty autoEditar.marca ? autoEditar.marca : ''}"
+    required />
+
+    <br>
+
+    <label for = "txtModelo"> Modelo </label>
+    <input type = "text" name = "txtModelo" id = "txtModelo" placeholder = "Modelo"
+        value = "${not empty autoEditar.modelo ? autoEditar.modelo : ''}"
+    required />
 
     <input type = "submit" value = "Enviar" />
 </form>
+
+<a href="index.jsp"> Ir a Inicio </a>
 
 <%@ include file ="footer.jsp" %>
 </body>

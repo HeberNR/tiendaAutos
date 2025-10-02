@@ -30,11 +30,11 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>autoServlet</servlet-name>
+        <servlet-name>AutoServlet</servlet-name>
         <servlet-class>org.progI.servlets.AutoServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>autoServlet</servlet-name>
+        <servlet-name>AutoServlet</servlet-name>
         <url-pattern>/AutoServlet</url-pattern>
     </servlet-mapping>
 </web-app>

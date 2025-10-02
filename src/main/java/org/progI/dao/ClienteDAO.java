@@ -125,11 +125,13 @@ public class ClienteDAO implements AdmConexion, DAO<Cliente, Integer> {
   public void delete(Integer id) {
     conn = obtenerConexion();
     try {
+      conn.setAutoCommit(false);
       PreparedStatement pst = conn.prepareStatement(SQL_DELETE);
       pst.setInt(1, id);
       int resultado = pst.executeUpdate();
 
       if (resultado == 1) {
+        conn.commit();
         System.out.println("Cliente eliminado correctamente");
       } else {
         System.out.println("No se pudo eliminar el cliente");
@@ -150,6 +152,7 @@ public class ClienteDAO implements AdmConexion, DAO<Cliente, Integer> {
     Cliente cliente = null;
 
     try {
+      conn.setAutoCommit(false);
       pst = conn.prepareStatement(SQL_EXISTSBYID);
       pst.setInt(1, id);
       rs = pst.executeQuery(); //ejecuto la consulta
@@ -160,6 +163,7 @@ public class ClienteDAO implements AdmConexion, DAO<Cliente, Integer> {
         cliente.setNombre((rs.getString("nombre")));
         cliente.setApellido(rs.getString("apellido"));
         cliente.setTelefono(rs.getString("telefono"));
+        conn.commit();
       }
 
       pst.close();
