@@ -16,10 +16,10 @@ public class ClienteDAO implements AdmConexion, DAO<Cliente, Integer> {
       "INSERT INTO clientes (nombre, apellido, telefono) " +
           "VALUES (?, ?, ?)";
   private static String SQL_UPDATE =
-      "UPDATE clientes SET" +
-          "nombre = ?," +
-          "apellido = ?," +
-          "telefono = ?" +
+      "UPDATE clientes SET " +
+          "nombre = ?, " +
+          "apellido = ?, " +
+          "telefono = ? " +
           "WHERE idCliente = ?";
   private static String SQL_DELETE = "DELETE FROM clientes WHERE idCliente = ?";
   private static String SQL_GETALL = "SELECT * FROM clientes ORDER BY nombre";

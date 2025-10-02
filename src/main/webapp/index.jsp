@@ -9,6 +9,9 @@
         <a href = "formCliente.jsp"> Nuevo Cliente </a>
         <br>
         <a href = "listadoClientes.jsp"> Lista de clientes </a>
+        <br>
+        <a href = "listadoAutos.jsp"> Lista de Autos </a>
+
 
         <%@ include file ="footer.jsp" %>
     </body>

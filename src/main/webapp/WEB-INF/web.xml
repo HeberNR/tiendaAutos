@@ -21,11 +21,11 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>clienteServlet</servlet-name>
+        <servlet-name>ClienteServlet</servlet-name>
         <servlet-class>org.progI.servlets.ClienteServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>clienteServlet</servlet-name>
+        <servlet-name>ClienteServlet</servlet-name>
         <url-pattern>/ClienteServlet</url-pattern>
     </servlet-mapping>
 

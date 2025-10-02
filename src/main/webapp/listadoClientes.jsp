@@ -38,7 +38,7 @@
            <td> <%=cli.getApellido() %> </td>
            <td> <%=cli.getTelefono() %> </td>
            <td> <a href="formCliente.jsp?operacion=editar&id=<%=cli.getIdCliente()%>"> Editar </a></td>
-           <td> <a href="formCliente?operacion=eliminar&id=<%=cli.getIdCliente()%>"> Eliminar </a></td>
+           <td> <a href="ClienteServlet?operacion=eliminar&id=<%=cli.getIdCliente()%>"> Eliminar </a></td>
         </tr>
     <% } %>
     </tbody>

@@ -23,7 +23,7 @@ public class ClienteServlet extends HttpServlet {
     int id = -1;
     operacion = req.getParameter("operacion");
 
-    if (operacion == "editar" || operacion == "nuevo") {
+    if (operacion.equals("editar") || operacion.equals("nuevo")) {
       nombre = req.getParameter("txtNombre");
       apellido = req.getParameter("txtApellido");
       telefono = req.getParameter("txtTelefono");
@@ -34,16 +34,11 @@ public class ClienteServlet extends HttpServlet {
     }
 
     ClienteDAO clienteDAO = new ClienteDAO();
-    if (operacion == "nuevo") {
+    if (operacion.equals("nuevo")) {
       Cliente clienteNuevo = new Cliente(nombre, apellido, telefono);
       clienteDAO.insert(clienteNuevo);
-      HttpSession session = req.getSession();
-      session.setAttribute("clienteTemporal", clienteNuevo);
-
-      res.sendRedirect("formulario_auto.jsp");
-      return;
     }
-    if (operacion == "editar") {
+    if (operacion.equals("editar")) {
       Cliente clienteEditar = clienteDAO.getById(id);
       clienteEditar.setNombre(nombre);
       clienteEditar.setApellido(apellido);

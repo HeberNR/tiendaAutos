@@ -12,11 +12,11 @@ import java.util.List;
 public class AutoImpl implements AdmConexion, DAO<Auto, Integer> {
   private Connection conn = null;
 
-  private static final String SQL_INSERT =
+  private static String SQL_INSERT =
       "INSERT INTO autos (patente, color, anio, kilometraje, marca, modelo, idCliente, idSeguro)" +
           "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-  private static final String SQL_UPDATE =
+  private static String SQL_UPDATE =
       "UPDATE autos SET " +
           "patente = ?, " +
           "color = ?, " +
@@ -26,19 +26,23 @@ public class AutoImpl implements AdmConexion, DAO<Auto, Integer> {
           "modelo = ? " +
           "WHERE idAuto = ?";
 
-  private static final String SQL_DELETE = "DELETE FROM autos WHERE idAuto = ?";
-  private static final String SQL_GETALL = "SELECT * FROM autos ORDER BY patente";
-  private static final String SQL_GETBYID = "SELECT * FROM autos WHERE idAuto = ?";
-  private static final String SQL_EXISTSBYID = "SELECT * FROM autos WHERE idAuto = ?";
+  private static String SQL_DELETE = "DELETE FROM autos WHERE idAuto = ?";
+  private static String SQL_GETALL = "SELECT * FROM autos ORDER BY anio";
+  private static String SQL_GETBYID = "SELECT * FROM autos WHERE idAuto = ?";
+  private static String SQL_EXISTSBYID = "SELECT * FROM autos WHERE idAuto = ?";
 
 
   @Override
   public List<Auto> getAll() {
     List<Auto> lista = new ArrayList<>();
+    conn = obtenerConexion();
+
+    PreparedStatement pst = null;
+    ResultSet rs = null;
 
     try {
-      PreparedStatement pst = conn.prepareStatement(SQL_GETALL);
-      ResultSet rs = pst.executeQuery();
+      pst = conn.prepareStatement(SQL_GETALL);
+      rs = pst.executeQuery();
 
       while (rs.next()) {
         Auto auto = new Auto();
@@ -55,6 +59,7 @@ public class AutoImpl implements AdmConexion, DAO<Auto, Integer> {
 
       rs.close();
       pst.close();
+      conn.close();
 
     } catch (SQLException e) {
       throw new RuntimeException(e);
@@ -64,21 +69,51 @@ public class AutoImpl implements AdmConexion, DAO<Auto, Integer> {
 
   @Override
   public void insert(Auto objeto) {
-    // 1 establecer conexion a la base de datos
     conn = obtenerConexion();
-    ClienteDAO clienteDAO = new ClienteDAO();
-    SeguroDAO seguroDAO = new SeguroDAO();
+    PreparedStatement pst = null;
+    ResultSet rs = null;
+    Auto auto = objeto;
 
-    boolean existeCliente = clienteDAO.existsById(objeto.getCliente().getIdCliente());
-    boolean existeSeguro = seguroDAO.existsById(objeto.getSeguro().getIdSeguro());
+    try {
+      pst = conn.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS);
 
-    //solo guardo si existe el cliente y el seguro en la base de datos
-    if (existeSeguro && existeCliente) {
+      pst.setString(1, objeto.getPatente());
+      pst.setString(2, objeto.getColor());
+      pst.setInt(3, objeto.getAnio());
+      pst.setInt(4, objeto.getKilometraje());
+      pst.setString(5, objeto.getMarca().toString());
+      pst.setString(6, objeto.getModelo());
+      pst.setInt(7, objeto.getCliente().getIdCliente());
+      pst.setInt(8, objeto.getSeguro().getIdSeguro());
 
-      // 2 Crear string de consulta SQL
-      PreparedStatement pst = null;
+      int resultado = pst.executeUpdate();
+      if (resultado == 1) {
+        System.out.println("Auto agregado correctamente.");
+      } else {
+        System.out.println("No se pudo agregar el auto.");
+      }
+
+      rs = pst.getGeneratedKeys();
+
+      if (rs.next()) {
+        auto.setIdAuto(rs.getInt(1));
+        System.out.println("El id asignado es: " + auto.getIdAuto());
+      }
+
+      pst.close();
+      rs.close();
+      conn.close();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public void update(Auto objeto) {
+    conn = obtenerConexion();
+    if (this.existsById(objeto.getIdAuto())) {
       try {
-        pst = conn.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement pst = conn.prepareStatement(SQL_UPDATE);
 
         pst.setString(1, objeto.getPatente());
         pst.setString(2, objeto.getColor());
@@ -86,65 +121,25 @@ public class AutoImpl implements AdmConexion, DAO<Auto, Integer> {
         pst.setInt(4, objeto.getKilometraje());
         pst.setString(5, objeto.getMarca().toString());
         pst.setString(6, objeto.getModelo());
-        pst.setInt(7, objeto.getCliente().getIdCliente());
-        pst.setInt(8, objeto.getSeguro().getIdSeguro());
+        pst.setInt(7, objeto.getIdAuto());
 
-        // 3 Ejecutar la instruccion
         int resultado = pst.executeUpdate();
         if (resultado == 1) {
-          System.out.println("Auto insertado correctamente");
+          System.out.println("Auto actualizado correctamente");
         } else {
-          System.out.println("No se pudo insertar el auto");
+          System.out.println("No se pudo actualizar el auto");
         }
-
-        ResultSet rs = pst.getGeneratedKeys();
-        if (rs.next()) {
-          objeto.setIdAuto(rs.getInt(1));
-          System.out.println("El id asignado es el: " + objeto.getIdAuto());
-        }
-
-        // 4 Cerrar conexiones
         pst.close();
         conn.close();
       } catch (SQLException e) {
-        throw new RuntimeException(e);
-      }
-    }
-  }
-
-  @Override
-  public void update(Auto objeto) {
-    ClienteDAO clienteDAO = new ClienteDAO();
-    SeguroDAO seguroDAO = new SeguroDAO();
-    boolean existeCliente = clienteDAO.existsById(objeto.getCliente().getIdCliente());
-    boolean existeSeguro = seguroDAO.existsById(objeto.getSeguro().getIdSeguro());
-    if (existeCliente && existeSeguro) {
-
-      if (this.existsById(objeto.getIdAuto())) {
-        try {
-          PreparedStatement pst = conn.prepareStatement(SQL_UPDATE); //establecer la conexion
-
-          pst.setString(1, objeto.getPatente());
-          pst.setString(2, objeto.getColor());
-          pst.setInt(3, objeto.getAnio());
-          pst.setInt(4, objeto.getKilometraje());
-          pst.setString(5, objeto.getMarca().toString());
-          pst.setString(6, objeto.getModelo());
-          pst.setInt(7, objeto.getIdAuto());
-
-          pst.executeUpdate(); //executo la consulta(update)
-
-          pst.close(); // cierro conexion
-        } catch (SQLException e) {
-          throw new RuntimeException(e);
-        }
+        System.out.println("Error al crear el statement");
       }
     }
   }
 
   @Override
   public void delete(Integer id) {
-    Connection conn = this.obtenerConexion();
+    conn = obtenerConexion();
 
     try {
       PreparedStatement pst = conn.prepareStatement(SQL_DELETE);
@@ -165,6 +160,7 @@ public class AutoImpl implements AdmConexion, DAO<Auto, Integer> {
 
   @Override
   public Auto getById(Integer id) {
+    conn = obtenerConexion();
     Auto auto = new Auto();
     PreparedStatement pst = null;
     ResultSet rs = null;
@@ -186,6 +182,7 @@ public class AutoImpl implements AdmConexion, DAO<Auto, Integer> {
 
       pst.close();
       rs.close();
+      conn.close();
 
     } catch (SQLException e) {
       throw new RuntimeException(e);
@@ -195,6 +192,7 @@ public class AutoImpl implements AdmConexion, DAO<Auto, Integer> {
 
   @Override
   public boolean existsById(Integer id) {
+    conn = obtenerConexion();
     PreparedStatement pst = null;
     ResultSet rs = null;
     boolean existe = false;
@@ -210,6 +208,7 @@ public class AutoImpl implements AdmConexion, DAO<Auto, Integer> {
 
       pst.close();
       rs.close();
+      conn.close();
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
