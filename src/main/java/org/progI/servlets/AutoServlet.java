@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.progI.dao.AutoImpl;
+import org.progI.dao.ClienteDAO;
 import org.progI.entities.Auto;
 import org.progI.entities.Cliente;
 import org.progI.entities.Marca;
@@ -24,47 +25,54 @@ public class AutoServlet extends HttpServlet {
     Marca marca = null;
     String modelo = "";
     String operacion = "nuevo";
-    Cliente cliente = null;
-    Seguro seguro = null;
-    int id = -1;
+    int idCliente = 0;
+    int idSeguro = 0;
+    int idAuto = -1;
 
     operacion = req.getParameter("operacion");
 
-      if ("editar".equals(operacion) || "nuevo".equals(operacion)) {
-        patente = req.getParameter("txtPatente");
-        color = req.getParameter("txtColor");
-        anio = Integer.parseInt(req.getParameter("txtAnio"));
-        kilometraje = Integer.parseInt(req.getParameter("txtKilometraje"));
-        marca = Marca.valueOf(req.getParameter("txtMarca"));
-        modelo = req.getParameter("txtModelo");
-      } else {
-        id = Integer.parseInt(req.getParameter("id"));
-      }
+    AutoImpl autoImpl = new AutoImpl();
 
-      AutoImpl autoImpl = new AutoImpl();
-      if ("nuevo".equals(operacion)) {
-        Auto autoNuevo = new Auto(patente, color, anio, kilometraje, marca, modelo);
+    switch (operacion) {
+      case "nuevo":
+        Cliente clienteNuevo;
+        ClienteDAO a = new ClienteDAO();
+        int idCli=Integer.valueOf(req.getParameter("selectCliente"));
+        clienteNuevo = a.getById(idCli);
+
+        Seguro seguroNuevo = new Seguro();
+        seguroNuevo.setIdSeguro(idSeguro);
+
+        Auto autoNuevo = new Auto(patente, color, anio, kilometraje, marca, modelo,
+            clienteNuevo, seguroNuevo);
         autoImpl.insert(autoNuevo);
-      }
+        break;
 
-      if ("editar".equals(operacion)) {
-        Auto autoEditar = autoImpl.getById(id);
-        autoEditar.setPatente(patente);
-        autoEditar.setColor(color);
-        autoEditar.setAnio(anio);
-        autoEditar.setKilometraje(kilometraje);
-        autoEditar.setMarca(marca);
-        autoEditar.setModelo(modelo);
-        autoEditar.setCliente(cliente);
-        autoEditar.setSeguro(seguro);
-        autoImpl.update(autoEditar);
-      }
+      case "editar":
+        Auto autoEditar = autoImpl.getById(idAuto);
+        if (autoEditar != null) {
+          autoEditar.setPatente(patente);
+          autoEditar.setColor(color);
+          autoEditar.setAnio(anio);
+          autoEditar.setKilometraje(kilometraje);
+          autoEditar.setMarca(marca);
+          autoEditar.setModelo(modelo);
 
-      if ("eliminar".equals(operacion)) {
-        autoImpl.delete(id);
-      }
+          Cliente clienteEditar = new Cliente();
+          clienteEditar.setIdCliente(idCliente);
 
-      RequestDispatcher rd = req.getRequestDispatcher("/index.jsp");
-      rd.forward(req, res);
+          Seguro seguroEditar = new Seguro();
+          seguroEditar.setIdSeguro(idSeguro);
+
+          autoImpl.update(autoEditar);
+        }
+        break;
+
+      case "eliminar":
+        autoImpl.delete(idAuto);
+        break;
     }
+    RequestDispatcher rd = req.getRequestDispatcher("/index.jsp");
+    rd.forward(req, res);
+  }
 }

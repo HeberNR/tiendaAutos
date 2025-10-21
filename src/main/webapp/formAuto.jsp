@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ page import="org.progI.entities.Marca" %>
 <%@ include file ="header.jsp" %>
 
 <jsp:useBean id="auto" class="org.progI.entities.Auto" scope="request" />
@@ -12,6 +13,11 @@
     <c:set var="listaAutos" value="${autoImpl.getAll()}" />
 </c:if>
 
+<%
+    Marca[] marcas = Marca.values();
+    request.setAttribute("listaMarcas", marcas);
+%>
+
 <h2>
 <c:choose>
     <c:when test = "${param.operacion == 'editar'}"> Editar Auto </c:when>
@@ -22,17 +28,6 @@
 
 <form action = "AutoServlet" method = "GET">
 
-    <label for = "selectAuto"> Seleccionar Auto </label>
-    <select name = "listAuto" id = "listAuto" tabindex = "1">
-        <c:forEach var = "a" items = "${listaAutos}">
-            <option value = "${a.idAuto}">
-                <c:if test = "${autoEditar.idAuto == a.idAuto}">selected</c:if>
-                ${a.marca} ${a.modelo}
-            </option>
-        </c:forEach>
-    </select>
-
-    <br>
 
     <input type = "hidden" name = "txtId"
         value = "${not empty autoEditar.idAuto ? autoEditar.idAuto : -1}"
@@ -71,9 +66,13 @@
     <br>
 
     <label for = "txtMarca"> Marca </label>
-    <input type = "text" name = "txtMarca" id = "txtMarca" placeholder = "Marca"
-        value = "${not empty autoEditar.marca ? autoEditar.marca : ''}"
-    required />
+    <select name="lstMarca" id="lstMarca" tabindex="1">
+        <c:forEach var="marca" items="${listaMarcas}">
+            <option value="${marca.name()}">
+                ${marca.name()}
+            </option>
+        </c:forEach>
+    </select>
 
     <br>
 
